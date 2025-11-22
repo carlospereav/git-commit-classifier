@@ -1,45 +1,55 @@
 import sys
+import os
 from datasets import load_dataset
+import logging
+from config.logging_config import setup_logging
+
+# Add parent directory to path to allow importing from config
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+# Configure logging
+setup_logging()
+logger = logging.getLogger(__name__)
 
 def inspect_data():
-    print("Loading dataset '0x404/ccs_dataset'...")
+    logger.info("Loading dataset '0x404/ccs_dataset'...")
     try:
         # Load the dataset
         dataset = load_dataset("0x404/ccs_dataset")
     except Exception as e:
-        print(f"Error loading dataset: {e}")
+        logger.error(f"Error loading dataset: {e}")
         sys.exit(1)
 
-    print("\nDataset loaded successfully!")
-    print(f"Structure: {dataset}")
+    logger.info("\nDataset loaded successfully!")
+    logger.info(f"Structure: {dataset}")
 
     # Inspect the first split (usually 'train')
     split_name = list(dataset.keys())[0]
-    print(f"\nInspecting split: '{split_name}'")
-    print(f"Number of examples: {len(dataset[split_name])}")
-    print(f"Features: {dataset[split_name].features}")
+    logger.info(f"\nInspecting split: '{split_name}'")
+    logger.info(f"Number of examples: {len(dataset[split_name])}")
+    logger.info(f"Features: {dataset[split_name].features}")
 
     # Get label info (using 'type' column)
     if 'type' in dataset[split_name].features:
-        print("\nFound 'type' column. Analyzing unique values...")
+        logger.info("\nFound 'type' column. Analyzing unique values...")
         unique_types = set(dataset[split_name]['type'])
-        print(f"Unique Labels found ({len(unique_types)}): {unique_types}")
+        logger.info(f"Unique Labels found ({len(unique_types)}): {unique_types}")
         
         # Create a simple mapping for display
-        print("\nProposed Label Mappings:")
+        logger.info("\nProposed Label Mappings:")
         sorted_types = sorted(list(unique_types))
         for idx, name in enumerate(sorted_types):
-            print(f"  ID {idx} -> {name}")
+            logger.info(f"  ID {idx} -> {name}")
     else:
-        print("\nDataset does not contain a 'type' column.")
+        logger.info("\nDataset does not contain a 'type' column.")
 
     # Show a few examples
-    print("\nFirst 3 Examples:")
+    logger.info("\nFirst 3 Examples:")
     for i in range(3):
         example = dataset[split_name][i]
         label = example['type'] if 'type' in example else 'UNKNOWN'
         text = example['commit_message'] if 'commit_message' in example else 'UNKNOWN'
-        print(f"  [{i}] Label: {label} | Text: {text}")
+        logger.info(f"  [{i}] Label: {label} | Text: {text}")
 
 if __name__ == "__main__":
     inspect_data()

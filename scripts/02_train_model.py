@@ -3,6 +3,16 @@ import torch
 from datasets import load_dataset
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
+import logging
+import sys
+from config.logging_config import setup_logging
+
+# Add parent directory to path to allow importing from config
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+# Configure logging
+setup_logging()
+logger = logging.getLogger(__name__)
 
 # 1. Configuration
 MODEL_NAME = "distilbert-base-uncased"
@@ -38,14 +48,14 @@ def compute_metrics(pred):
     }
 
 def main():
-    print(f"Starting training pipeline using {MODEL_NAME}...")
+    logger.info(f"Starting training pipeline using {MODEL_NAME}...")
 
     # 2. Load Dataset
-    print("Loading dataset...")
+    logger.info("Loading dataset...")
     dataset = load_dataset(DATASET_NAME)
     
     # 3. Preprocessing
-    print("Preprocessing data...")
+    logger.info("Preprocessing data...")
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
     def preprocess_function(examples):
@@ -58,7 +68,7 @@ def main():
     tokenized_datasets = dataset.map(preprocess_function, batched=True)
 
     # 4. Model Setup
-    print("Initializing model...")
+    logger.info("Initializing model...")
     model = AutoModelForSequenceClassification.from_pretrained(
         MODEL_NAME, 
         num_labels=len(LABEL2ID),
@@ -91,14 +101,14 @@ def main():
     )
 
     # 7. Train
-    print("Training started...")
+    logger.info("Training started...")
     trainer.train()
 
     # 8. Save Final Model
-    print(f"Saving model to {OUTPUT_DIR}...")
+    logger.info(f"Saving model to {OUTPUT_DIR}...")
     model.save_pretrained(OUTPUT_DIR)
     tokenizer.save_pretrained(OUTPUT_DIR)
-    print("Model saved successfully!")
+    logger.info("Model saved successfully!")
 
 if __name__ == "__main__":
     main()
