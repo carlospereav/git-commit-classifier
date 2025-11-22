@@ -1,11 +1,12 @@
 import sys
 import os
-from datasets import load_dataset
-import logging
-from config.logging_config import setup_logging
 
 # Add parent directory to path to allow importing from config
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from datasets import load_dataset
+import logging
+from config.logging_config import setup_logging
 
 # Configure logging
 setup_logging()

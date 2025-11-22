@@ -5,10 +5,12 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trai
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 import logging
 import sys
-from config.logging_config import setup_logging
+import os
 
 # Add parent directory to path to allow importing from config
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from config.logging_config import setup_logging
 
 # Configure logging
 setup_logging()
