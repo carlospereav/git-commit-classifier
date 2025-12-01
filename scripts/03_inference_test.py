@@ -14,19 +14,20 @@ def predict():
         print("Make sure you have run 'scripts/02_train_model.py' first.")
         return
 
-    # Test examples covering different classes
+    # Test examples WITHOUT prefixes (Hard Mode)
+    # We want to see if the model understands the *content*, not just the prefix.
     test_messages = [
-        "fix: prevent crash when user inputs empty string",
-        "feat: add new dark mode toggle to settings",
-        "docs: update installation instructions in README",
-        "style: format code with black",
-        "refactor: simplify authentication logic",
-        "test: add unit tests for user login",
-        "chore: update dependencies",
-        "ci: fix github actions pipeline",
-        "build: upgrade webpack version",
-        "perf: optimize image loading speed",
-        "this is a random commit message without prefix" # Tricky one
+        "prevent crash when user inputs empty string",           # Should be: fix
+        "add new dark mode toggle to settings",                  # Should be: feat
+        "update installation instructions in README",            # Should be: docs
+        "format code with black",                                # Should be: style
+        "simplify authentication logic",                         # Should be: refactor
+        "add unit tests for user login",                         # Should be: test
+        "update dependencies",                                   # Should be: chore
+        "fix github actions pipeline",                           # Should be: ci
+        "upgrade webpack version",                               # Should be: build
+        "optimize image loading speed",                          # Should be: perf
+        "initial commit"                                         # Ambiguous
     ]
 
     print("\nRunning Inference Tests:\n")

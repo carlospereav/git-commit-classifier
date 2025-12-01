@@ -61,8 +61,8 @@ def main():
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
     def preprocess_function(examples):
-        # Tokenize text
-        tokenized = tokenizer(examples["commit_message"], truncation=True, padding="max_length", max_length=64)
+        # Tokenize text (using masked_commit_message to avoid learning prefixes)
+        tokenized = tokenizer(examples["masked_commit_message"], truncation=True, padding="max_length", max_length=64)
         # Map string labels to integers
         tokenized["label"] = [LABEL2ID[label] for label in examples["type"]]
         return tokenized
@@ -81,7 +81,7 @@ def main():
     # 5. Training Arguments
     training_args = TrainingArguments(
         output_dir=LOG_DIR,
-        num_train_epochs=3,              # Fast training for demo
+        num_train_epochs=10,              # Increased to 10 for better convergence
         per_device_train_batch_size=16,
         per_device_eval_batch_size=64,
         warmup_steps=100,
