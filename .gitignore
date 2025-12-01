@@ -400,3 +400,8 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Model artifacts and training logs
+model/
+results/
+logs/
