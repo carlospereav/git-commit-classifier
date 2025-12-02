@@ -13,6 +13,11 @@ st.set_page_config(
 
 # Constants
 MODEL_PATH = "./model"
+COLOR_MAP = {
+    "feat": "#2ea44f", "fix": "#cb2431", "docs": "#0366d6", "style": "#6f42c1",
+    "refactor": "#d73a49", "test": "#f9c513", "chore": "#959da5", 
+    "perf": "#6f42c1", "ci": "#24292e", "build": "#24292e"
+}
 
 # --- Model Loading (Cached) ---
 @st.cache_resource
@@ -157,12 +162,7 @@ with tab1:
                 confidence_score = confidence.item()
 
                 # Color mapping for badges (Hex codes)
-                color_map = {
-                    "feat": "#2ea44f", "fix": "#cb2431", "docs": "#0366d6", "style": "#6f42c1",
-                    "refactor": "#d73a49", "test": "#f9c513", "chore": "#959da5", 
-                    "perf": "#6f42c1", "ci": "#24292e", "build": "#24292e"
-                }
-                bg_color = color_map.get(predicted_label, "#959da5")
+                bg_color = COLOR_MAP.get(predicted_label, "#959da5")
                 
                 # Display Result in a nice card
                 st.markdown(f"""
@@ -208,14 +208,18 @@ with tab2:
     st.subheader("🐙 Analyze Repository")
     st.markdown("Fetch the latest commits from a public repository and classify them all at once.")
     
-    repo_url = st.text_input("GitHub Repository URL:", placeholder="https://github.com/huggingface/transformers")
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        repo_url = st.text_input("GitHub Repository URL:", placeholder="https://github.com/huggingface/transformers")
+    with col2:
+        limit = st.number_input("Commits to fetch", min_value=5, max_value=50, value=10, step=5)
     
     if st.button("Fetch & Analyze", type="primary"):
         if not repo_url:
             st.warning("Please enter a URL.")
         else:
-            with st.spinner("Fetching commits from GitHub..."):
-                result = fetch_recent_commits(repo_url, limit=10)
+            with st.spinner(f"Fetching last {limit} commits from GitHub..."):
+                result = fetch_recent_commits(repo_url, limit=limit)
                 
             if "error" in result:
                 st.error(result["error"])
@@ -257,4 +261,17 @@ with tab2:
                 # Stats
                 st.markdown("### 📈 Commit Distribution")
                 type_counts = df['Type'].value_counts()
-                st.bar_chart(type_counts)
+                
+                fig = go.Figure(data=[go.Pie(
+                    labels=type_counts.index, 
+                    values=type_counts.values, 
+                    hole=.4, # Donut chart
+                    marker=dict(colors=[COLOR_MAP.get(label, 'grey') for label in type_counts.index])
+                )])
+                
+                fig.update_layout(
+                    height=300,
+                    margin=dict(l=0, r=0, t=0, b=0),
+                    font=dict(family="Inter, sans-serif")
+                )
+                st.plotly_chart(fig, use_container_width=True)
