@@ -121,7 +121,7 @@ from utils.github_helper import fetch_recent_commits
 # ... (Previous imports and config remain)
 
 # Main Input
-tab1, tab2 = st.tabs(["✍️ Single Message", "🐙 Analyze Repo"])
+tab1, tab2, tab3 = st.tabs(["✍️ Single Message", "🐙 Analyze Repo", "🧠 How it Works"])
 
 with tab1:
     st.subheader("⚡ Quick Test")
@@ -275,3 +275,31 @@ with tab2:
                     font=dict(family="Inter, sans-serif")
                 )
                 st.plotly_chart(fig, use_container_width=True)
+
+with tab3:
+    st.subheader("🧠 Under the Hood: The NLP Pipeline")
+    
+    st.markdown("""
+    ### 1. The Architecture: DistilBERT
+    At the core of this application lies **DistilBERT**, a distilled version of the BERT (Bidirectional Encoder Representations from Transformers) architecture. 
+    
+    While standard BERT models are powerful, they are often too heavy for real-time applications. We chose DistilBERT because it reduces the model size by 40% and increases inference speed by 60% while retaining over 97% of BERT's performance capabilities.
+    
+    The model consists of **6 Transformer layers** (compared to BERT-base's 12). Each layer uses **Self-Attention mechanisms** to understand the context of every word in relation to every other word in the sentence. This is crucial for commit messages, where the meaning of a word like "fix" depends heavily on whether it's used as a verb ("fix bug") or a noun ("hot fix").
+
+    ### 2. The Semantic Challenge & Strategy
+    A common pitfall in classifying commit messages is **overfitting to prefixes**. If a model simply learns that the word "feat" at the start of a sentence equals the `feat` label, it hasn't learned anything useful. It fails immediately when a developer writes "added a new login button" instead of "feat: added login button".
+    
+    To solve this, we implemented a **Robustness Strategy** during the data preparation phase:
+    
+    We trained the model specifically on **masked commit messages**. We algorithmically stripped the Conventional Commit prefixes (e.g., removing `feat:`, `fix:`) from the training data. This forced the model's attention mechanism to focus on the **semantic content** of the message—the verbs ("add", "remove", "optimize") and the technical objects ("database", "API", "css")—rather than relying on the easy shortcut of the prefix.
+    
+    ### 3. Fine-Tuning Process
+    We utilized **Transfer Learning** to adapt the pre-trained DistilBERT model (which already understands English syntax and grammar) to our specific domain of software engineering logs.
+    
+    - **Tokenizer:** We used the WordPiece tokenizer to break down technical jargon into sub-word units (e.g., "refactoring" &rarr; "refactor" + "##ing"), ensuring the model handles out-of-vocabulary technical terms gracefully.
+    - **Optimization:** The model was fine-tuned using the **AdamW optimizer** with a linear learning rate scheduler. We monitored the **Cross-Entropy Loss** to minimize the divergence between the predicted probability distribution and the actual labels.
+    - **Classification Head:** On top of the transformer encoder, we added a linear classification layer that projects the 768-dimensional hidden states of the `[CLS]` token into our 10 target classes (`feat`, `fix`, `docs`, etc.).
+    
+    This approach resulted in a model that doesn't just "read" text, but "understands" the intent behind code changes.
+    """)
