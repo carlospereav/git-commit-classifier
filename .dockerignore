@@ -1,0 +1,77 @@
+# ========================================
+# Docker Ignore - Git Commit Classifier
+# ========================================
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Git
+.git/
+.gitignore
+
+# Training checkpoints (not needed for inference)
+results/
+checkpoints/
+*.pt
+*.pth
+*.bin
+!model/*.bin
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Jupyter
+*.ipynb
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+tests/
+test_*.py
+*_test.py
+pytest.ini
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Documentation (not needed in container)
+*.md
+!README.md
+docs/
+
+# Scripts (training scripts not needed)
+scripts/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker files (don't need to copy themselves)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Cloud config files
+cloudbuild.yaml
+.gcloudignore
+
+# Misc
+*.tar.gz
+*.zip
+

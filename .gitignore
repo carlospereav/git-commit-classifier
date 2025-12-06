@@ -401,7 +401,7 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-# Model artifacts and training logs
+# Model and training artifacts (model hosted on HuggingFace Hub)
 model/
 results/
 logs/

@@ -11,8 +11,8 @@ st.set_page_config(
     layout="centered"
 )
 
-# Constants
-MODEL_PATH = "./model"
+# Constants - Load model from HuggingFace Hub
+MODEL_PATH = "carlosperea/git-commit-classifier"
 COLOR_MAP = {
     "feat": "#2ea44f", "fix": "#cb2431", "docs": "#0366d6", "style": "#6f42c1",
     "refactor": "#d73a49", "test": "#f9c513", "chore": "#959da5", 

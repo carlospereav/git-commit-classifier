@@ -1,0 +1,49 @@
+# ========================================
+# GCloud Ignore - Git Commit Classifier
+# ========================================
+# This file controls what gets uploaded during `gcloud builds submit`
+# Similar to .dockerignore but for gcloud CLI
+
+# Git
+.git/
+.gitignore
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Training artifacts (not needed for inference)
+results/
+checkpoints/
+scripts/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.so
+
+# Jupyter
+*.ipynb
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# Documentation
+*.md
+docs/
+
+# Tests
+tests/
+*_test.py
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
